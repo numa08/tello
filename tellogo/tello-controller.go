@@ -15,6 +15,10 @@ type TelloController struct {
 	callback       TelloCommandCallbackType
 }
 
+func newTelloController() *TelloController {
+	return new(TelloController)
+}
+
 func (this *TelloController) Start(callback TelloCommandCallbackType) error {
 	addr, err := net.ResolveUDPAddr("udp", telloControllerAddress)
 	if err != nil {

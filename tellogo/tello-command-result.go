@@ -1,7 +1,7 @@
 package tellogo
 
 const (
-	Ok TelloCommandResult = "ok"
+	Ok    TelloCommandResult = "ok"
 	Error TelloCommandResult = "error"
 )
 

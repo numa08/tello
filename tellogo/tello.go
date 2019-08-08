@@ -23,10 +23,22 @@ type TelloVideoControllerType interface {
 	End()
 }
 
-func NewTelloControllerType() TelloControllerType {
-	return new(TelloController)
+type Tello struct {
+	Controller      TelloControllerType
+	VideoController TelloVideoControllerType
 }
 
-func NewTelloVideoControllerType() TelloVideoControllerType {
-	return new(TelloVideoController)
+func NewTello() *Tello {
+	controller := newTelloController()
+	videoController := newTelloVideoController()
+	tello := &Tello{Controller: controller, VideoController: videoController}
+	// ビデオストリーム配信開始/終了は channel を使って自動的に controller に送る
+	// コマンド送信忘れ防止
+	go func() {
+		for {
+			command := <-videoController.requestCommandChannel
+			controller.SendCommand(command)
+		}
+	}()
+	return tello
 }

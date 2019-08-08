@@ -1,7 +1,7 @@
 package tellogo
 
 const (
-	Command TelloCommand = "command"
-	StreamOn TelloCommand = "streamon"
+	Command   TelloCommand = "command"
+	StreamOn  TelloCommand = "streamon"
 	StreamOff TelloCommand = "streamoff"
 )

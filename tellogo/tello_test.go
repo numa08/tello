@@ -2,9 +2,9 @@ package tellogo
 
 import (
 	"fmt"
+	"os"
 	"testing"
 	"time"
-	"os"
 )
 
 var callbackChannel chan string
@@ -18,27 +18,27 @@ func (this *controllerCallback) OnCommandExecuted(command string, result string)
 
 var videoBuffer []byte
 
-type videoControllerCallback struct {}
+type videoControllerCallback struct{}
 
-func(this *videoControllerCallback) OnUpdateVideoFrame(frame []byte) {
+func (this *videoControllerCallback) OnUpdateVideoFrame(frame []byte) {
 	fmt.Printf("on video frame updated\n")
 	videoBuffer = append(videoBuffer, frame...)
 }
 
 func TestVideo(t *testing.T) {
 	videoBuffer = []byte{}
-	tello := NewTelloControllerType()
-	video := NewTelloVideoControllerType()
+	tello := NewTello()
+	controller := tello.Controller
+	video := tello.VideoController
 	videoCallback := new(videoControllerCallback)
-	err := tello.Start(nil)
+	err := controller.Start(nil)
 	if err != nil {
 		t.Fatalf("tello start failed %s\n", err.Error())
 		return
 	}
 	video.Start(videoCallback)
-	tello.SendCommand(StreamOn)
 	select {
-	case <- time.After(15 * time.Second):
+	case <-time.After(15 * time.Second):
 	}
 	if len(videoBuffer) <= 0 {
 		t.Fatal("video frame is empty")
@@ -47,26 +47,26 @@ func TestVideo(t *testing.T) {
 		videoFile.Write(videoBuffer)
 	}
 	video.End()
-	tello.SendCommand(StreamOff)
-	tello.End()
+	controller.End()
 }
 
 func TestRunTello(t *testing.T) {
 	callbackChannel = make(chan string)
-	tello := NewTelloControllerType()
+	tello := NewTello()
+	controller := tello.Controller
 	callback := new(controllerCallback)
-	err := tello.Start(callback)
+	err := controller.Start(callback)
 	if err != nil {
 		t.Fatalf("tello start failed %s", err.Error())
 	}
 	select {
-	case res := <- callbackChannel:
+	case res := <-callbackChannel:
 		fmt.Printf("has response %s\n", res)
 		if res != "commandok" {
 			t.Fatalf("tello response is invalided %s", res)
 		}
-	case <- time.After(5 * time.Second):
+	case <-time.After(5 * time.Second):
 		t.Fatal("response timeout")
 	}
-	tello.End()
+	controller.End()
 }
