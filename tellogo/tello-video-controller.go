@@ -56,7 +56,7 @@ func (this *TelloVideoController) receive() {
 		}
 	}()
 	for {
-		buf := make([]byte, 1024)
+		buf := make([]byte, 2048)
 		n, _, err := this.conn.ReadFrom(buf)
 		if err != nil {
 			fmt.Printf("error %s \n", err.Error())
