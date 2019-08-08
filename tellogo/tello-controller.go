@@ -5,8 +5,8 @@ import (
 	"net"
 )
 
-const localAddress = ":9000"
-const telloAddress = "192.168.10.1:8889"
+const localControllerAddress = ":9000"
+const telloControllerAddress = "192.168.10.1:8889"
 
 type TelloController struct {
 	receiveChannel chan struct{}
@@ -16,11 +16,11 @@ type TelloController struct {
 }
 
 func (this *TelloController) Start(callback TelloCommandCallbackType) error {
-	addr, err := net.ResolveUDPAddr("udp", telloAddress)
+	addr, err := net.ResolveUDPAddr("udp", telloControllerAddress)
 	if err != nil {
 		return err
 	}
-	laddr, err := net.ResolveUDPAddr("udp", localAddress)
+	laddr, err := net.ResolveUDPAddr("udp", localControllerAddress)
 	if err != nil {
 		return err
 	}
