@@ -7,63 +7,63 @@ import (
 
 const localVideoAddress = ":11111"
 
-type TelloVideoController struct {
+type telloVideoController struct {
 	conn                  *net.UDPConn
 	callback              TelloVideoCallbackType
 	receiveChannel        chan struct{}
 	requestCommandChannel chan TelloCommand
 }
 
-func newTelloVideoController() *TelloVideoController {
-	return &TelloVideoController{requestCommandChannel: make(chan TelloCommand)}
+func newTelloVideoController() *telloVideoController {
+	return &telloVideoController{requestCommandChannel: make(chan TelloCommand)}
 }
 
-func (this *TelloVideoController) Start(callback TelloVideoCallbackType) error {
+func (tv *telloVideoController) Start(callback TelloVideoCallbackType) error {
 	laddr, err := net.ResolveUDPAddr("udp", localVideoAddress)
 	if err != nil {
 		return err
 	}
-	this.callback = callback
+	tv.callback = callback
 	conn, err := net.ListenUDP("udp", laddr)
 	if err != nil {
 		return err
 	}
-	this.conn = conn
-	this.receiveChannel = make(chan struct{})
-	go this.receive()
-	this.requestCommandChannel <- StreamOn
+	tv.conn = conn
+	tv.receiveChannel = make(chan struct{})
+	go tv.receive()
+	tv.requestCommandChannel <- StreamOn
 	return nil
 }
 
-func (this *TelloVideoController) End() {
-	this.requestCommandChannel <- StreamOff
-	if this.receiveChannel != nil {
-		close(this.receiveChannel)
+func (tv *telloVideoController) End() {
+	tv.requestCommandChannel <- StreamOff
+	if tv.receiveChannel != nil {
+		close(tv.receiveChannel)
 	}
 }
 
-func (this *TelloVideoController) send(frame []byte) {
-	if this.callback == nil {
+func (tv *telloVideoController) send(frame []byte) {
+	if tv.callback == nil {
 		return
 	}
-	this.callback.OnUpdateVideoFrame(frame)
+	tv.callback.OnUpdateVideoFrame(frame)
 }
 
-func (this *TelloVideoController) receive() {
+func (tv *telloVideoController) receive() {
 	defer func() {
-		if this.conn != nil {
-			this.conn.Close()
+		if tv.conn != nil {
+			tv.conn.Close()
 		}
 	}()
 	for {
 		buf := make([]byte, 2048)
-		n, _, err := this.conn.ReadFrom(buf)
+		n, _, err := tv.conn.ReadFrom(buf)
 		if err != nil {
 			fmt.Printf("error %s \n", err.Error())
 		}
-		go this.send(buf[0:n])
+		go tv.send(buf[0:n])
 		select {
-		case <-this.receiveChannel:
+		case <-tv.receiveChannel:
 			return
 		default:
 		}

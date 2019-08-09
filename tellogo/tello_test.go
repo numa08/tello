@@ -11,7 +11,7 @@ var callbackChannel chan string
 
 type controllerCallback struct{}
 
-func (this *controllerCallback) OnCommandExecuted(command string, result string) {
+func (cb *controllerCallback) OnCommandExecuted(command string, result string) {
 	fmt.Printf("on command executed:%s result %s\n", command, result)
 	callbackChannel <- fmt.Sprintf("%s%s", command, result)
 }
@@ -20,7 +20,7 @@ var videoBuffer []byte
 
 type videoControllerCallback struct{}
 
-func (this *videoControllerCallback) OnUpdateVideoFrame(frame []byte) {
+func (cb *videoControllerCallback) OnUpdateVideoFrame(frame []byte) {
 	fmt.Printf("on video frame updated\n")
 	videoBuffer = append(videoBuffer, frame...)
 }
