@@ -1,11 +1,11 @@
 package tellogo
 
-type TelloCommand string
+type TelloCommand = string
 
-type TelloCommandResult string
+type TelloCommandResult = string
 
 type TelloCommandCallbackType interface {
-	OnCommandExecuted(command string, result string)
+	OnCommandExecuted(command TelloCommand, result TelloCommandResult)
 }
 
 type TelloControllerType interface {

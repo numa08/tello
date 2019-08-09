@@ -79,7 +79,7 @@ func (this *TelloController) receive() {
 		}
 		result := string(buf[0:n])
 		if this.callback != nil {
-			this.callback.OnCommandExecuted(string(command), string(ConvertTelloCommandResult(result)))
+			this.callback.OnCommandExecuted(command, ConvertTelloCommandResult(result))
 		}
 		select {
 		case <-this.receiveChannel:
