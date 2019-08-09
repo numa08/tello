@@ -5,12 +5,11 @@ PACKAGE=github.com/numa08/tello/tellogo
 all: android ios
 
 android:
-	mkdir -p articles/android
-	gomobile bind -o articles/android/tellogo.aar --target=android $(PACKAGE)
+	mkdir -p ../app/android/tellogo/
+	gomobile bind -o ../app/android/tellogo/tellogo.aar --target=android $(PACKAGE)
 
 ios:
-	mkdir -p articles/ios
-	gomobile bind -o articles/ios/Tellogo.framework --target=ios $(PACKAGE)
+	gomobile bind -o ../app/ios/Flutter/Tellogo.framework --target=ios $(PACKAGE)
 
 clean:
 	@rm -rf articles

@@ -42,3 +42,7 @@ func NewTello() *Tello {
 	}()
 	return tello
 }
+
+func Version() string {
+	return "0.0.1"
+}
