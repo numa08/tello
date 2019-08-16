@@ -55,13 +55,20 @@ func (tv *telloVideoController) receive() {
 			tv.conn.Close()
 		}
 	}()
+	var frame = []byte{}
 	for {
 		buf := make([]byte, 2048)
 		n, _, err := tv.conn.ReadFrom(buf)
+		frame = append(frame, buf[0:n]...)
 		if err != nil {
 			fmt.Printf("error %s \n", err.Error())
 		}
-		go tv.send(buf[0:n])
+		if n != 1460 {
+			// did receive 1 frame
+			go tv.send(frame)
+			frame = []byte{}
+		}
+
 		select {
 		case <-tv.receiveChannel:
 			return
